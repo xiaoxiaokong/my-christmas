@@ -5,121 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>圣诞快乐 - 2025</title>
     <style>
-        /* 1. 基础样式与背景 */
+        /* 1. 基础样式 */
         body {
             margin: 0;
             padding: 0;
             background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
             color: #fff;
             font-family: 'Microsoft YaHei', sans-serif;
-            overflow: hidden; /* 防止雪花滚动条 */
-            height: 100vh;
+            overflow-x: hidden;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            padding-bottom: 50px;
         }
 
-        /* 2. 标题动画 */
-        h1 {
-            font-size: 3rem;
-            color: #ff4d4d;
-            text-shadow: 0 0 10px #fff, 0 0 20px #ff4d4d;
-            margin-bottom: 20px;
-            z-index: 10;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 10px #fff, 0 0 20px #ff4d4d; }
-            to { text-shadow: 0 0 20px #fff, 0 0 30px #ff0000; }
-        }
-
-        /* 3. 圣诞树样式 */
-        .tree {
-            position: relative;
-            width: 200px;
-            height: 300px;
-            z-index: 5;
-        }
-
-        .tree-layer {
-            width: 0;
-            height: 0;
-            border-left: 100px solid transparent;
-            border-right: 100px solid transparent;
-            border-bottom: 100px solid #2d5a27;
-            position: absolute;
-        }
-
-        .layer1 { top: 0; border-left-width: 60px; border-right-width: 60px; left: 40px; }
-        .layer2 { top: 60px; border-left-width: 80px; border-right-width: 80px; left: 20px; }
-        .layer3 { top: 120px; border-left-width: 100px; border-right-width: 100px; }
-
-        .trunk {
-            width: 40px;
-            height: 60px;
-            background: #5d4037;
-            position: absolute;
-            bottom: 60px;
-            left: 80px;
-        }
-
-        .star {
-            position: absolute;
-            top: -25px;
-            left: 75px;
-            color: gold;
-            font-size: 50px;
-            animation: spin 3s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
-        }
-
-        /* 4. 雪花样式 */
-        .snowflake {
+        /* 2. 音乐控制按钮 */
+        #music-control {
             position: fixed;
-            top: -10px;
-            color: white;
-            font-size: 1em;
-            user-select: none;
+            top: 20px;
+            right: 20px;
             z-index: 1000;
-            pointer-events: none;
-        }
-
-        /* 5. 倒计时容器 */
-        #countdown {
-            margin-top: 30px;
-            font-size: 1.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px 30px;
-            border-radius: 50px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        /* 6. 按钮 */
-        .wish-btn {
-            margin-top: 20px;
-            padding: 10px 25px;
-            background: #c0392b;
-            color: white;
-            border: none;
-            border-radius: 5px;
             cursor: pointer;
-            font-size: 1rem;
-            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            border: 2px solid #fff;
+            animation: rotate 3s linear infinite;
         }
-        .wish-btn:hover { background: #e74c3c; transform: scale(1.1); }
+        #music-control.paused {
+            animation-play-state: paused;
+            opacity: 0.6;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
 
+        /* 3. 圣诞树 */
+        .tree { position: relative; width: 200px; height: 260px; margin-top: 50px; }
+        .tree-layer {
+            width: 0; height: 0;
+            border-left: 80px solid transparent;
+            border-right: 80px solid transparent;
+            border-bottom: 80px solid #2d5a27;
+            position: absolute;
+        }
+        .layer1 { top: 0; border-left-width: 50px; border-right-width: 50px; left: 30px; }
+        .layer2 { top: 50px; border-left-width: 70px; border-right-width: 70px; left: 10px; }
+        .layer3 { top: 100px; border-left-width: 80px; border-right-width: 80px; }
+        .trunk { width: 30px; height: 40px; background: #5d4037; position: absolute; bottom: 40px; left: 65px; }
+        .star { position: absolute; top: -25px; left: 55px; color: gold; font-size: 40px; }
+
+        /* 4. 视频容器 */
+        .video-section {
+            margin-top: 40px;
+            width: 90%;
+            max-width: 600px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.5);
+        }
+        video { width: 100%; display: block; }
+
+        /* 5. 下雪 */
+        .snowflake {
+            position: fixed; top: -10px; color: white;
+            user-select: none; z-index: 1000; pointer-events: none;
+        }
+
+        h1 { margin-top: 30px; text-shadow: 0 0 10px #ff4d4d; }
     </style>
 </head>
-<body>
+<body onclick="firstClick()">
 
-    <h1>Merry Christmas!</h1>
+    <!-- 背景音乐 (替换src为你自己的mp3链接) -->
+    <audio id="bgm" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 音乐开关按钮 -->
+    <div id="music-control" onclick="toggleMusic(event)">🎵</div>
+
+    <h1>Merry Christmas</h1>
 
     <!-- 圣诞树 -->
     <div class="tree">
@@ -130,74 +104,58 @@
         <div class="trunk"></div>
     </div>
 
-    <!-- 倒计时 -->
-    <div id="countdown">计算倒计时中...</div>
-
-    <button class="wish-btn" onclick="sendWish()">点击接收祝福</button>
+    <!-- 视频区域 (替换src为你自己的视频链接) -->
+    <div class="video-section">
+        <video controls poster="https://via.placeholder.com/600x340/000000/FFFFFF?text=Click+to+Play+Video">
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+            您的浏览器不支持视频播放。
+        </video>
+    </div>
 
     <script>
-        // --- 1. 下雪特效 ---
+        const bgm = document.getElementById('bgm');
+        const musicBtn = document.getElementById('music-control');
+        let hasInteracted = false;
+
+        // 第一次点击页面任何地方播放音乐（解决浏览器限制）
+        function firstClick() {
+            if (!hasInteracted) {
+                bgm.play();
+                hasInteracted = true;
+            }
+        }
+
+        // 切换音乐开关
+        function toggleMusic(event) {
+            event.stopPropagation(); // 防止触发firstClick
+            if (bgm.paused) {
+                bgm.play();
+                musicBtn.classList.remove('paused');
+            } else {
+                bgm.pause();
+                musicBtn.classList.add('paused');
+            }
+        }
+
+        // 雪花特效
         function createSnowflake() {
             const snowflake = document.createElement('div');
             snowflake.innerHTML = '❄';
-            snowflake.classList.add('snowflake');
-            
-            // 随机设置雪花的位置、大小和透明度
+            snowflake.className = 'snowflake';
             snowflake.style.left = Math.random() * window.innerWidth + 'px';
             snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
             snowflake.style.opacity = Math.random();
-            snowflake.style.transition = `top ${Math.random() * 3 + 2}s linear, left 2s ease-in-out`;
-
             document.body.appendChild(snowflake);
 
-            // 让雪花落下的动画
-            setTimeout(() => {
-                snowflake.style.top = window.innerHeight + 'px';
-            }, 100);
+            const duration = Math.random() * 3000 + 3000;
+            snowflake.animate([
+                { transform: 'translateY(0)' },
+                { transform: `translateY(${window.innerHeight}px)` }
+            ], { duration: duration, easing: 'linear' });
 
-            // 移除旧雪花
-            setTimeout(() => {
-                snowflake.remove();
-            }, 5000);
+            setTimeout(() => snowflake.remove(), duration);
         }
-
-        setInterval(createSnowflake, 150);
-
-        // --- 2. 倒计时逻辑 ---
-        function updateCountdown() {
-            const now = new Date();
-            const currentYear = now.getFullYear();
-            let christmas = new Date(currentYear, 11, 25); // 月份从0开始，11是12月
-
-            if (now > christmas) {
-                christmas = new Date(currentYear + 1, 11, 25);
-            }
-
-            const diff = christmas - now;
-
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const m = Math.floor((diff / 1000 / 60) % 60);
-            const s = Math.floor((diff / 1000) % 60);
-
-            document.getElementById('countdown').innerHTML = 
-                `距离圣诞节还有: ${d}天 ${h}小时 ${m}分 ${s}秒`;
-        }
-
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
-
-        // --- 3. 祝福互动 ---
-        function sendWish() {
-            const wishes = [
-                "愿你的圣诞充满温馨和喜悦！",
-                "祝你在新的一年里平安喜乐，万事顺意。",
-                "Merry Christmas! 愿你所有的梦想都能实现。",
-                "在这个寒冷的冬天，愿我的祝福带给你温暖。"
-            ];
-            const randomWish = wishes[Math.floor(Math.random() * wishes.length)];
-            alert(randomWish);
-        }
+        setInterval(createSnowflake, 200);
     </script>
 </body>
 </html>
