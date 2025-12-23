@@ -3,159 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>圣诞快乐 - 2025</title>
+    <title>Merry Christmas - Last Christmas</title>
     <style>
-        /* 1. 基础样式 */
+        /* 基础样式 */
         body {
             margin: 0;
             padding: 0;
             background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
             color: #fff;
             font-family: 'Microsoft YaHei', sans-serif;
-            overflow-x: hidden;
-            min-height: 100vh;
+            overflow: hidden;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-bottom: 50px;
+            justify-content: center;
+            cursor: pointer; /* 提示用户可以点击 */
         }
 
-        /* 2. 音乐控制按钮 */
-        #music-control {
+        /* 入场提示：提示用户点击播放音乐 */
+        #play-hint {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.2);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
-            border: 2px solid #fff;
-            animation: rotate 3s linear infinite;
+            transition: opacity 0.5s;
         }
-        #music-control.paused {
-            animation-play-state: paused;
-            opacity: 0.6;
+        #play-hint.hidden { opacity: 0; pointer-events: none; }
+        .hint-btn {
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            background: #ff4d4d;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 0 20px #ff4d4d;
         }
-        @keyframes rotate {
+
+        /* 音乐旋转图标 */
+        .music-icon {
+            position: fixed;
+            top: 20px; right: 20px;
+            font-size: 30px;
+            z-index: 100;
+            animation: rotating 3s linear infinite;
+            display: none; /* 初始隐藏 */
+        }
+        @keyframes rotating {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
 
-        /* 3. 圣诞树 */
-        .tree { position: relative; width: 200px; height: 260px; margin-top: 50px; }
-        .tree-layer {
-            width: 0; height: 0;
-            border-left: 80px solid transparent;
-            border-right: 80px solid transparent;
-            border-bottom: 80px solid #2d5a27;
-            position: absolute;
-        }
-        .layer1 { top: 0; border-left-width: 50px; border-right-width: 50px; left: 30px; }
-        .layer2 { top: 50px; border-left-width: 70px; border-right-width: 70px; left: 10px; }
-        .layer3 { top: 100px; border-left-width: 80px; border-right-width: 80px; }
-        .trunk { width: 30px; height: 40px; background: #5d4037; position: absolute; bottom: 40px; left: 65px; }
-        .star { position: absolute; top: -25px; left: 55px; color: gold; font-size: 40px; }
+        /* 圣诞树与标题样式 */
+        h1 { font-size: 3rem; color: #ff4d4d; text-shadow: 0 0 20px #ff4d4d; margin-bottom: 20px; text-align: center;}
+        .tree { position: relative; width: 160px; height: 200px; }
+        .tree-layer { width: 0; height: 0; border-left: 80px solid transparent; border-right: 80px solid transparent; border-bottom: 80px solid #2d5a27; position: absolute; }
+        .l1 { top: 0; border-left-width: 40px; border-right-width: 40px; left: 40px; }
+        .l2 { top: 40px; border-left-width: 60px; border-right-width: 60px; left: 20px; }
+        .l3 { top: 80px; border-left-width: 80px; border-right-width: 80px; }
+        .star { position: absolute; top: -30px; left: 62px; color: gold; font-size: 40px; animation: glow 1s infinite alternate; }
+        
+        @keyframes glow { from { opacity: 0.5; } to { opacity: 1; } }
 
-        /* 4. 视频容器 */
-        .video-section {
-            margin-top: 40px;
-            width: 90%;
-            max-width: 600px;
-            border: 5px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 77, 77, 0.5);
-        }
-        video { width: 100%; display: block; }
-
-        /* 5. 下雪 */
-        .snowflake {
-            position: fixed; top: -10px; color: white;
-            user-select: none; z-index: 1000; pointer-events: none;
-        }
-
-        h1 { margin-top: 30px; text-shadow: 0 0 10px #ff4d4d; }
+        .snowflake { position: fixed; top: -10px; color: white; pointer-events: none; }
     </style>
 </head>
-<body onclick="firstClick()">
+<body>
 
-    <!-- 背景音乐 (替换src为你自己的mp3链接) -->
-    <audio id="bgm" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
+    <!-- 播放提示遮罩层 (解决浏览器自动播放限制) -->
+    <div id="play-hint" onclick="startEverything()">
+        <button class="hint-btn">🎄 开启圣诞惊喜 🎁</button>
+        <p style="margin-top:20px; color:#aaa;">(点击播放 Last Christmas)</p>
+    </div>
 
-    <!-- 音乐开关按钮 -->
-    <div id="music-control" onclick="toggleMusic(event)">🎵</div>
+    <div class="music-icon" id="mIcon">🎵</div>
 
     <h1>Merry Christmas</h1>
 
-    <!-- 圣诞树 -->
     <div class="tree">
         <div class="star">★</div>
-        <div class="tree-layer layer1"></div>
-        <div class="tree-layer layer2"></div>
-        <div class="tree-layer layer3"></div>
-        <div class="trunk"></div>
+        <div class="tree-layer l1"></div>
+        <div class="tree-layer l2"></div>
+        <div class="tree-layer l3"></div>
     </div>
 
-    <!-- 视频区域 (替换src为你自己的视频链接) -->
-    <div class="video-section">
-        <video controls poster="https://via.placeholder.com/600x340/000000/FFFFFF?text=Click+to+Play+Video">
-            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-            您的浏览器不支持视频播放。
-        </video>
-    </div>
+    <!-- 音乐文件：这里使用了 Wham! - Last Christmas 的一个音频地址 -->
+    <audio id="bgm" loop>
+        <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Wham/Classic_Christmas_Songs/Wham_-_Last_Christmas.mp3" type="audio/mpeg">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg"> <!-- 备用地址 -->
+    </audio>
 
     <script>
         const bgm = document.getElementById('bgm');
-        const musicBtn = document.getElementById('music-control');
-        let hasInteracted = false;
+        const hint = document.getElementById('play-hint');
+        const icon = document.getElementById('mIcon');
 
-        // 第一次点击页面任何地方播放音乐（解决浏览器限制）
-        function firstClick() {
-            if (!hasInteracted) {
-                bgm.play();
-                hasInteracted = true;
-            }
+        // 核心功能：点击后隐藏遮罩、开始音乐、开始下雪
+        function startEverything() {
+            bgm.play().then(() => {
+                hint.classList.add('hidden');
+                icon.style.display = 'block';
+                startSnowing();
+            }).catch(e => {
+                console.log("播放失败，请再次点击页面", e);
+            });
         }
 
-        // 切换音乐开关
-        function toggleMusic(event) {
-            event.stopPropagation(); // 防止触发firstClick
+        // 下雪特效
+        function startSnowing() {
+            setInterval(() => {
+                const snowflake = document.createElement('div');
+                snowflake.innerHTML = '❄';
+                snowflake.className = 'snowflake';
+                snowflake.style.left = Math.random() * window.innerWidth + 'px';
+                snowflake.style.fontSize = Math.random() * 15 + 10 + 'px';
+                snowflake.style.opacity = Math.random();
+                document.body.appendChild(snowflake);
+
+                const duration = Math.random() * 3000 + 4000;
+                snowflake.animate([
+                    { transform: 'translateY(0)' },
+                    { transform: `translateY(${window.innerHeight}px)` }
+                ], { duration: duration, easing: 'linear' });
+
+                setTimeout(() => snowflake.remove(), duration);
+            }, 100);
+        }
+
+        // 兼容处理：点击页面任意位置也能播放
+        document.body.addEventListener('click', () => {
             if (bgm.paused) {
-                bgm.play();
-                musicBtn.classList.remove('paused');
-            } else {
-                bgm.pause();
-                musicBtn.classList.add('paused');
+                startEverything();
             }
-        }
-
-        // 雪花特效
-        function createSnowflake() {
-            const snowflake = document.createElement('div');
-            snowflake.innerHTML = '❄';
-            snowflake.className = 'snowflake';
-            snowflake.style.left = Math.random() * window.innerWidth + 'px';
-            snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
-            snowflake.style.opacity = Math.random();
-            document.body.appendChild(snowflake);
-
-            const duration = Math.random() * 3000 + 3000;
-            snowflake.animate([
-                { transform: 'translateY(0)' },
-                { transform: `translateY(${window.innerHeight}px)` }
-            ], { duration: duration, easing: 'linear' });
-
-            setTimeout(() => snowflake.remove(), duration);
-        }
-        setInterval(createSnowflake, 200);
+        }, { once: true });
     </script>
 </body>
 </html>
