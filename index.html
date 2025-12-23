@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Merry Christmas - 圣诞倒计时</title>
+    <title>Merry Christmas 2025</title>
     <style>
         /* 1. 基础样式 */
         body {
@@ -13,207 +13,248 @@
             font-family: 'Microsoft YaHei', sans-serif;
             overflow: hidden;
             height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             cursor: pointer;
         }
 
-        /* 2. 播放提示遮罩 */
-        #play-hint {
+        /* 2. 视频层 */
+        #video-overlay {
+            display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.8s;
+            background: #000; z-index: 20000;
         }
-        #play-hint.hidden { opacity: 0; pointer-events: none; }
-        .hint-btn {
-            padding: 18px 35px; font-size: 1.4rem; background: #ff4d4d;
-            border: none; border-radius: 50px; color: white; cursor: pointer;
-            box-shadow: 0 0 25px #ff4d4d; transition: transform 0.3s;
+        #christmas-video { width: 100%; height: 100%; object-fit: cover; }
+        .exit-video {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255,255,255,0.3); color: white; border: none;
+            padding: 10px 20px; border-radius: 20px; cursor: pointer; z-index: 20001;
         }
-        .hint-btn:hover { transform: scale(1.1); }
 
-        /* 3. 音乐旋转图标 */
-        .music-icon {
-            position: fixed; top: 25px; right: 25px;
-            font-size: 30px; z-index: 100;
-            animation: rotating 3s linear infinite;
-            display: none; cursor: pointer;
+        /* 3. 提示浮层 */
+        #music-tip, #tip_window {
+            position: fixed; padding: 12px 25px; border-radius: 30px;
+            font-size: 0.9rem; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: bounce 2s infinite; transition: opacity 0.5s;
         }
-        .paused { animation-play-state: paused; opacity: 0.5; }
+        #music-tip { top: 20px; background: #ff4d4d; }
+        #tip_window { top: 80px; background: #2d5a27; display: none; }
+
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* 4. 圣诞内容 */
+        h1 { font-size: 3rem; color: #ff4d4d; text-shadow: 0 0 20px #ff4d4d; margin: 10px 0; z-index: 10; }
+        .countdown-container { display: flex; gap: 15px; margin-bottom: 30px; z-index: 10; }
+        .time-box { text-align: center; }
+        .time-box span { font-size: 2rem; font-weight: bold; color: #fff; display: block; }
+        .time-box p { margin: 0; font-size: 0.7rem; color: #ff4d4d; }
+
+        .tree { position: relative; width: 160px; height: 220px; margin: 20px 0; }
+        .tree-layer { width: 0; height: 0; border-left: 80px solid transparent; border-right: 80px solid transparent; border-bottom: 80px solid #2d5a27; position: absolute; }
+        .l1 { top: 0; border-left-width: 40px; border-right-width: 40px; left: 40px; }
+        .l2 { top: 40px; border-left-width: 60px; border-right-width: 60px; left: 20px; }
+        .l3 { top: 80px; border-left-width: 80px; border-right-width: 80px; }
+        .star { position: absolute; top: -30px; left: 62px; color: gold; font-size: 40px; animation: rotating 4s linear infinite; }
+        .trunk { width: 30px; height: 40px; background: #5d4037; position: absolute; bottom: 30px; left: 65px; }
+
         @keyframes rotating { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* 4. 标题 */
-        h1 { font-size: 2.5rem; color: #ff4d4d; text-shadow: 0 0 20px #ff4d4d; margin-bottom: 10px; z-index: 10; }
-
-        /* 5. 倒计时样式 */
-        #countdown-box {
-            display: none; /* 初始隐藏，点击后显示 */
-            flex-direction: row;
-            gap: 15px;
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px 25px;
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            z-index: 10;
-            animation: fadeIn 2s;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        .time-item { text-align: center; min-width: 50px; }
-        .time-item span { font-size: 1.8rem; font-weight: bold; color: #ff4d4d; display: block; }
-        .time-item p { margin: 0; font-size: 0.7rem; color: #ccc; text-transform: uppercase; }
-
-        /* 6. 圣诞树 */
-        .tree { position: relative; width: 140px; height: 180px; margin-top: 20px; }
-        .tree-layer { width: 0; height: 0; border-left: 70px solid transparent; border-right: 70px solid transparent; border-bottom: 70px solid #2d5a27; position: absolute; }
-        .l1 { top: 0; border-left-width: 35px; border-right-width: 35px; left: 35px; }
-        .l2 { top: 35px; border-left-width: 55px; border-right-width: 55px; left: 15px; }
-        .l3 { top: 70px; border-left-width: 70px; border-right-width: 70px; }
-        
-        .light {
-            position: absolute; width: 5px; height: 5px; border-radius: 50%;
-            z-index: 5; animation: blink 1s infinite alternate;
-        }
-        @keyframes blink { from { opacity: 0.3; } to { opacity: 1; } }
-
-        .star { position: absolute; top: -25px; left: 54px; color: gold; font-size: 35px; animation: starGlow 1s infinite alternate; z-index: 6; }
-        @keyframes starGlow { from { text-shadow: 0 0 5px #fff; } to { text-shadow: 0 0 20px gold; } }
-
+        .music-icon { position: fixed; top: 25px; right: 25px; font-size: 30px; display: none; animation: rotating 3s linear infinite; z-index: 100; }
         .snowflake { position: fixed; top: -10px; color: white; pointer-events: none; z-index: 1; }
+
+        /* 5. 弹窗样式 */
+        #modal_overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; backdrop-filter: blur(5px); }
+        #surprise_modal { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 80%; max-width: 320px; background: #fff; color: #333; padding: 40px 20px; 
+            border-radius: 25px; text-align: center; z-index: 10001; border: 4px solid #ff4d4d;
+        }
+        .modal-btn { 
+            margin-top: 25px; padding: 10px 30px; background: #ff4d4d; color: white; 
+            border: none; border-radius: 50px; cursor: pointer; font-weight: bold;
+        }
     </style>
 </head>
-<body>
+<body onclick="playMusic()">
 
-    <!-- 启动遮罩 -->
-    <div id="play-hint" onclick="startEverything()">
-        <button class="hint-btn">🎄 点击开启圣诞惊喜 🎁</button>
-        <p style="color: #666; margin-top: 15px;">2025 Christmas Celebration</p>
+    <!-- 全屏视频层 -->
+    <div id="video-overlay">
+        <button class="exit-video" onclick="closeVideo(event)">跳过视频</button>
+        <video id="christmas-video" playsinline>
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+        </video>
     </div>
 
-    <!-- 音乐控制 -->
-    <div class="music-icon" id="mIcon" onclick="toggleMusic(event)">🎵</div>
+    <div id="music-tip">你戳我一下噻</div>
+    <div id="tip_window" onclick="showSurprise(event)">😄 也宠幸戳我一下呗 有惊喜吼 🎄</div>
+
+    <!-- 弹窗结构 -->
+    <div id="modal_overlay"></div>
+    <div id="surprise_modal">
+        <h2 id="modal_title" style="color: #ff4d4d; margin: 0;">🎁 惊喜一</h2>
+        <p id="blessing_text" style="font-size: 1.1rem; line-height: 1.6; margin-top: 20px;">正在加载祝福...</p>
+        <button id="next_btn" class="modal-btn" onclick="handleNextBlessing()">收下好运</button>
+    </div>
+
+    <div class="music-icon" id="mIcon">🎵</div>
 
     <h1>Merry Christmas</h1>
 
-    <!-- 圣诞树 -->
     <div class="tree" id="christmasTree">
         <div class="star">★</div>
         <div class="tree-layer l1"></div>
         <div class="tree-layer l2"></div>
         <div class="tree-layer l3"></div>
+        <div class="trunk"></div>
     </div>
 
-    <!-- 倒计时模块 -->
-    <div id="countdown-box">
-        <div class="time-item"><span id="days">00</span><p>天</p></div>
-        <div class="time-item"><span id="hours">00</span><p>时</p></div>
-        <div class="time-item"><span id="minutes">00</span><p>分</p></div>
-        <div class="time-item"><span id="seconds">00</span><p>秒</p></div>
+    <div class="countdown-container">
+        <div class="time-box"><span id="days">00</span><p>日</p></div>
+        <div class="time-box"><span id="hours">00</span><p>时</p></div>
+        <div class="time-box"><span id="minutes">00</span><p>分</p></div>
+        <div class="time-box"><span id="seconds">00</span><p>秒</p></div>
     </div>
 
+    <p style="letter-spacing: 3px; color: #888; z-index: 10;">♥️ 健康 开心 挣毛毛 💰</p>
+ 
     <audio id="bgm" loop>
         <source src="https://online1.tingclass.net/music/shi0529/lastchristmas.mp3" type="audio/mpeg">
     </audio>
 
     <script>
+        // --- 祝福语配置区域 ---
+        const blessingList = [
+            "叮！你的圣诞祝福已到货，请耐心回复‘快乐’签收，否则圣诞老人会生气哦",
+            "圣诞老人驾着马车托我祝你",
+            "2026年钱包像圣诞老人的口袋一样，永远装不满！",
+            "所有的烦恼都像冬天的雪花，遇光即化，平安喜乐！",
+            "吃不胖、睡得香，爱的人也正好在身边。",
+            "快乐没签收够吖！别着急嘛！还没到圣诞节呢，你再继续戳一戳👇",
+            "愿你：有糖吃，有梦追，有人爱，有光追 ✨",
+            "系统提示：您的圣诞快乐已升级为‘VIP尊享版’，有效期：一生！♥️",
+            "您订购的‘2026年幸福’在派送中，预计到达时间——手指发送信息，我帮你查看订单进度！📦",
+            "哎呦！还要啊！没开心够啊！那我可还有好多好多，要不相约元旦🍻",
+            "温馨提示：倒计时结束记得来领取你的VIP🎁喔，绝对惊喜"
+        ];
+        let currentStep = 0; // 记录当前显示到第几条
+
         const bgm = document.getElementById('bgm');
-        const hint = document.getElementById('play-hint');
-        const icon = document.getElementById('mIcon');
-        const countdownBox = document.getElementById('countdown-box');
+        const videoOverlay = document.getElementById('video-overlay');
+        const video = document.getElementById('christmas-video');
+        const mTip = document.getElementById('music-tip');
+        const mTipWindow = document.getElementById('tip_window');
+        const modal = document.getElementById('surprise_modal');
+        const overlay = document.getElementById('modal_overlay');
+        const blessingText = document.getElementById('blessing_text');
+        const modalTitle = document.getElementById('modal_title');
+        const nextBtn = document.getElementById('next_btn');
 
-        // 核心函数：启动所有效果
-        function startEverything() {
-            bgm.play().then(() => {
-                hint.classList.add('hidden'); // 隐藏遮罩
-                icon.style.display = 'block'; // 显示音乐图标
-                countdownBox.style.display = 'flex'; // 显示倒计时
-                
-                startSnowing();   // 开始下雪
-                createLights();   // 生成彩灯
-                updateCountdown(); // 立即计算一次倒计时
-                setInterval(updateCountdown, 1000); // 开启秒级更新
-            }).catch(e => console.log("等待交互..."));
-        }
+        window.onload = () => {
+            checkAndRunCountdown();
+            startSnowing();
+            createLights();
+        };
 
-        // 倒计时逻辑
-        function updateCountdown() {
-            const now = new Date();
-            const currentYear = now.getFullYear();
-            // 设定目标日期为当年的 12 月 25 日 00:00:00
-            let target = new Date(currentYear, 11, 25); 
-
-            // 如果今年的圣诞节已经过了，就计算明年的
-            if (now > target) {
-                target = new Date(currentYear + 1, 11, 25);
-            }
-
-            const diff = target - now; // 毫秒差
-
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const m = Math.floor((diff / (1000 * 60)) % 60);
-            const s = Math.floor((diff / 1000) % 60);
-
-            // 更新到页面，补齐两位数
-            document.getElementById('days').innerText = d.toString().padStart(2, '0');
-            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
-            document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
-            document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
-        }
-
-        // 音乐开关
-        function toggleMusic(event) {
+        // --- 核心：点击“宠幸”触发弹窗 ---
+        function showSurprise(event) {
             event.stopPropagation();
-            if (bgm.paused) {
-                bgm.play();
-                icon.classList.remove('paused');
+            currentStep = 0; // 每次重新点开都从第一条开始
+            updateModalContent();
+            modal.style.display = "block";
+            overlay.style.display = "block";
+           // mTipWindow.style.display = "none"; // 点过一次就隐藏提示
+        }
+
+        // --- 核心：处理点击“收下好运”按钮 ---
+        function handleNextBlessing() {
+            currentStep++; // 增加步数
+            if (currentStep < blessingList.length) {
+                // 如果还有下一条，更新内容
+                updateModalContent();
             } else {
-                bgm.pause();
-                icon.classList.add('paused');
+                // 如果是最后一条，关闭弹窗
+                //closeModal();
             }
         }
 
-        // 装饰灯
-        function createLights() {
-            const tree = document.getElementById('christmasTree');
-            const colors = ['#ff0000', '#ffff00', '#0000ff', '#ffffff', '#ff69b4'];
-            for (let i = 0; i < 15; i++) {
-                const light = document.createElement('div');
-                light.className = 'light';
-                light.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                light.style.top = Math.random() * 120 + 20 + 'px';
-                light.style.left = Math.random() * 80 + 30 + 'px';
-                light.style.animationDelay = Math.random() + 's';
-                tree.appendChild(light);
+        // 更新弹窗文字的辅助函数
+        function updateModalContent() {
+            modalTitle.innerText = `🎅 🦌 🎁 🎄 🤟 👧 🤙 🤞`;
+            blessingText.innerText = blessingList[currentStep];
+            
+            // 如果是最后一条，可以改变按钮文字
+            if (currentStep === blessingList.length - 1) {
+                nextBtn.innerText = "戳不动了，那见面戳吧😊";
+            }else if(currentStep === 5){
+                nextBtn.innerText = "快点我后面老精彩啦😄";
+            }else {
+                nextBtn.innerText = "快乐签收😘";
             }
         }
 
-        // 下雪
+        function closeModal() {
+            modal.style.display = "none";
+            overlay.style.display = "none";
+        }
+
+        // --- 以下是原有的逻辑代码 ---
+        function checkAndRunCountdown() {
+            const update = () => {
+                const now = new Date();
+                const target = new Date(2025, 11, 25); 
+                const diff = target - now;
+                if (diff <= 0) {
+                    document.querySelectorAll('.time-box span').forEach(s => s.innerText = "00");
+                } else {
+                    document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2,'0');
+                    document.getElementById('hours').innerText = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2,'0');
+                    document.getElementById('minutes').innerText = Math.floor((diff / (1000 * 60)) % 60).toString().padStart(2,'0');
+                    document.getElementById('seconds').innerText = Math.floor((diff / 1000) % 60).toString().padStart(2,'0');
+                }
+            };
+            setInterval(update, 1000);
+            update();
+        }
+
+        function playMusic() {
+            if (bgm.paused) {
+                bgm.play().then(() => {
+                    mTip.style.display = 'none';
+                    mTipWindow.style.display = 'block';
+                    document.getElementById('mIcon').style.display = 'block';
+                });
+            }
+        }
+
+        function closeVideo(event) {
+            event.stopPropagation();
+            video.pause();
+            videoOverlay.style.display = 'none';
+            bgm.play();
+        }
+
         function startSnowing() {
             setInterval(() => {
                 const snowflake = document.createElement('div');
-                snowflake.innerHTML = '❄';
-                snowflake.className = 'snowflake';
+                snowflake.innerHTML = '❄'; snowflake.className = 'snowflake';
                 snowflake.style.left = Math.random() * window.innerWidth + 'px';
                 snowflake.style.fontSize = Math.random() * 15 + 10 + 'px';
-                snowflake.style.opacity = Math.random();
                 document.body.appendChild(snowflake);
-
                 const duration = Math.random() * 3000 + 4000;
-                snowflake.animate([
-                    { transform: 'translateY(0) rotate(0deg)' },
-                    { transform: `translateY(${window.innerHeight}px) rotate(360deg)` }
-                ], { duration: duration, easing: 'linear' });
-
+                snowflake.animate([{ transform: 'translateY(0)' }, { transform: `translateY(${window.innerHeight}px)` }], { duration: duration });
                 setTimeout(() => snowflake.remove(), duration);
-            }, 100);
+            }, 150);
         }
+
+        function createLights() {
+            const tree = document.getElementById('christmasTree');
+            for (let i = 0; i < 18; i++) {
+                const light = document.createElement('div');
+                light.style.cssText = `position:absolute; width:6px; height:6px; border-radius:50%; background:white; top:${Math.random()*150+20}px; left:${Math.random()*110+25}px; box-shadow:0 0 10px white; animation: blink ${Math.random()+0.5}s infinite alternate;`;
+                tree.appendChild(light);
+            }
+        }
+        const style = document.createElement('style');
+        style.innerHTML = `@keyframes blink { from { opacity: 0.3; } to { opacity: 1; } }`;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
