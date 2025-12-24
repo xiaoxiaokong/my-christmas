@@ -220,14 +220,11 @@
 
         // --- 弹窗 & 装饰逻辑 ---
         function showSurprise(event) {
-            if (!videoTriggered) {
-                    triggerChristmasVideo();
-                }
-           /* event.stopPropagation();
+            event.stopPropagation();
             currentStep = 0;
             updateModalContent();
             modal.style.display = "block";
-            document.getElementById('modal_overlay').style.display = "block";*/
+            document.getElementById('modal_overlay').style.display = "block";
         }
 
         function handleNextBlessing() {
