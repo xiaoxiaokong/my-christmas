@@ -153,7 +153,7 @@
         const nextBtn = document.getElementById('next_btn');
 
         window.onload = () => {
-            checkAndRunCountdown();
+             checkAndRunCountdown();
             startSnowing();
             createLights();
         };
@@ -164,9 +164,10 @@
             
             if (now >= targetDate) {
                 // 情况 A：打开网页时已经是圣诞节，直接放视频
-                if (!videoTriggered) {
+                triggerChristmasVideo();
+                /*if (!videoTriggered) {
                     triggerChristmasVideo();
-                }
+                }*/
             } else {
                 // 情况 B：还没到圣诞节，播背景音乐
                 if (bgm.paused && videoOverlay.style.display !== 'block') {
@@ -205,7 +206,7 @@
         function triggerChristmasVideo() {
             videoTriggered = true;
             bgm.pause(); // 停止音乐
-            mTip.style.display = 'none';
+            mTip.style.display = 'block';
             videoOverlay.style.display = 'block'; // 显示视频层
             video.play().catch(e => console.log("等待用户交互后播放视频"));
         }
